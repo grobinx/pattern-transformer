@@ -5,8 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "start": "tsc && node dist/test.js",
+    "dev": "ts-node src/test.ts",
+    "debug": "npm run build && node --inspect dist/test.js"
   },
   "dependencies": {},
   "devDependencies": {
