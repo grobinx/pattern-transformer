@@ -102,7 +102,12 @@ export const transformTree = <T = string>(
 
             // Fragment before the found pattern
             if (matchIndex > 0) {
-                parentNode.values.push(text.substring(0, matchIndex));
+                const node: TreeNode<T> = {
+                    type: 'text',
+                    oryginal: text.substring(0, matchIndex),
+                    values: [],
+                };
+                parentNode.values.push(processText(node.oryginal!, node)); // Add the fragment before the pattern as a new node
             }
 
             // Adding the found pattern
@@ -142,7 +147,7 @@ export const transformTree = <T = string>(
  * @throws Will throw an error if no transformation function is defined for a rule.
  */
 export const transformApply = <T = string>(
-    tree: TreeNode<T>, 
+    tree: TreeNode<T>,
     transform: TransformFunction<T>
 ): T => {
     const transformNode = (node: TreeNode<T>): T => {
@@ -160,6 +165,8 @@ export const transformApply = <T = string>(
 
         if (node.rule && node.rule.transform) {
             node.transformed = node.rule.transform(transformedValues);
+        } else if (node.type === 'text') {
+            node.transformed = transform(node.values);
         } else if (node.type === 'root') {
             node.transformed = transform(transformedValues);
         } else {
@@ -188,6 +195,6 @@ export const transform = <T = string>(
 ): T => {
     const tree = transformTree<T>(input, rules);
     const result = transformApply<T>(tree, transform);
-    //console.debug('pattern-transformer', 'transformTree', JSON.stringify(tree, null, 2));
+    console.debug('pattern-transformer', 'transformTree', JSON.stringify(tree, null, 2));
     return result;
 };
