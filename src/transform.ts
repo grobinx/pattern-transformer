@@ -38,13 +38,17 @@ export type TransformationRule<T = string> = {
     stop?: boolean;
 };
 
-type TreeNode<T = string> = {
+export type TreeNode<T = string> = {
     type: string;
     oryginal?: string;
     values: (string | TreeNode<T>)[];
     rule?: TransformationRule<T>;
     transformed?: T;
 };
+
+export function isTreeNode<T = string>(node: any): node is TreeNode<T> {
+    return node && typeof node === 'object' && 'type' in node && 'values' in node;
+}
 
 /**
  * Function to transform an input string based on defined rules.
@@ -195,6 +199,6 @@ export const transform = <T = string>(
 ): T => {
     const tree = transformTree<T>(input, rules);
     const result = transformApply<T>(tree, transform);
-    console.debug('pattern-transformer', 'transformTree', JSON.stringify(tree, null, 2));
+    //console.debug('pattern-transformer', 'transformTree', JSON.stringify(tree, null, 2));
     return result;
 };
