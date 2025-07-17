@@ -1,36 +1,37 @@
-import { TransformationRule } from '../transform';
+import { TransformationRule, TransformFunction } from '../transform';
+import { simpleTransformFunction } from './textTransforms';
 
 export const simpleMarkdown = (...additionalRules: TransformationRule[]): TransformationRule[] => {
     const baseRules: TransformationRule[] = [
         {
             pattern: /^# (.*)$/m, // Matches lines starting with "# " (Markdown header level 1)
             group: 1,
-            transform: (match) => `<h1>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h1>`,
+            transform: (match) => `<h1>${simpleTransformFunction(match)}</h1>`,
         },
         {
             pattern: /^## (.*)$/m, // Matches lines starting with "## " (Markdown header level 2)
             group: 1,
-            transform: (match) => `<h2>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h2>`,
+            transform: (match) => `<h2>${simpleTransformFunction(match)}</h2>`,
         },
         {
             pattern: /^### (.*)$/m, // Matches lines starting with "### " (Markdown header level 3)
             group: 1,
-            transform: (match) => `<h3>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h3>`,
+            transform: (match) => `<h3>${simpleTransformFunction(match)}</h3>`,
         },
         {
             pattern: /^#### (.*)$/m, // Matches lines starting with "#### " (Markdown header level 4)
             group: 1,
-            transform: (match) => `<h4>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h4>`,
+            transform: (match) => `<h4>${simpleTransformFunction(match)}</h4>`,
         },
         {
             pattern: /\*\*(.*?)\*\*/, // Matches bold text enclosed in "**"
             group: 1,
-            transform: (match) => `<strong>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</strong>`,
+            transform: (match) => `<strong>${simpleTransformFunction(match)}</strong>`,
         },
         {
             pattern: /\*(.*?)\*/, // Matches italic text enclosed in "*"
             group: 1,
-            transform: (match) => `<em>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</em>`,
+            transform: (match) => `<em>${simpleTransformFunction(match)}</em>`,
         },
         {
             pattern: /\[(.*?)\]\((.*?)\)/, // Matches Markdown links [text](url)

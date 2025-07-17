@@ -1,4 +1,8 @@
-import { TransformationRule } from '../transform';
+import { TransformationRule, TransformFunction } from '../transform';
+
+export const simpleTransformFunction: TransformFunction = (match) => {
+    return match.map((item) => typeof item === 'string' ? item : item.transformed).join('');
+};
 
 /**
  * Rule for transforming phone numbers

@@ -47,12 +47,18 @@ export const simpleMarkdown = (...additionalRules: TransformationRule[]): Transf
         {
             pattern: /^# (.*)$/m, // Matches lines starting with "# " (Markdown header level 1)
             group: 1,
-            transform: (match) => `<h1>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h1>`,
+            transform: (match) => `<h1>${simpleTransformFunction(match)}</h1>`,
         },
         {
             pattern: /^## (.*)$/m, // Matches lines starting with "## " (Markdown header level 2)
             group: 1,
-            transform: (match) => `<h2>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h2>`,
+            transform: (match) => `<h2>${simpleTransformFunction(match)}</h2>`,
+        },
+        ...
+        {
+            pattern: /`([^`]+)`/, // Matches inline code `code`
+            transform: (match) => `<code>${match[0] as string}</code>`,
+            stop: true,
         },
         ...
     ]
@@ -65,16 +71,16 @@ export const simpleMarkdown = (...additionalRules: TransformationRule[]): Transf
 Here’s an example of how the transformation function works:
 
 ```typescript
-import { transform } from './src/index';
 import { simpleMarkdown } from './src/rules/simpleMarkdown';
-import { phoneNumberTransform, ibanTransform } from './src/rules/textTransforms';
+import { ibanTransform, phoneNumberTransform, simpleTransformFunction } from './src/rules/textTransforms';
+import { transform } from './src/transform';
 
 const input = "## Opis: **Nr telefonu: +48999999999** +48999999999\nDane: **jakaś pogrubiona treść** *GB29NWBK60161331926819* PL12345678901234567890123456";
 
 const result = transform(
     input, 
     simpleMarkdown(phoneNumberTransform, ibanTransform),
-    (match) => match.map((item) => typeof item === 'string' ? item : item.transformed).join('')
+    simpleTransformFunction
 );
 
 console.log(result);

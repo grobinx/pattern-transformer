@@ -6,6 +6,13 @@
  */
 
 /**
+ * Type alias for a transformation function.
+ * Represents a function that takes an array of matched strings or TreeNode objects
+ * and returns a transformed value of type T.
+ */
+export type TransformFunction<T = string> = (match: (string | TreeNode<T> | T)[]) => T;
+
+/**
  * TransformationRule interface
  * Represents a rule for transforming input strings.
  */
@@ -24,7 +31,7 @@ export type TransformationRule<T = string> = {
      * @param match Array of matched strings or TreeNode objects.
      * @returns Transformed value of type T.
      */
-    transform: (match: (string | TreeNode<T> | T)[]) => T;
+    transform: TransformFunction<T>,
     /**
      * Stop transform level
      */
@@ -136,7 +143,7 @@ export const transformTree = <T = string>(
  */
 export const transformApply = <T = string>(
     tree: TreeNode<T>, 
-    transform: (match: (string | TreeNode<T> | T)[]) => T
+    transform: TransformFunction<T>
 ): T => {
     const transformNode = (node: TreeNode<T>): T => {
         if (node.values.length === 0) {
@@ -177,7 +184,7 @@ export const transformApply = <T = string>(
 export const transform = <T = string>(
     input: string,
     rules: TransformationRule<T>[],
-    transform: (match: (string | TreeNode<T> | T)[]) => T
+    transform: TransformFunction<T>
 ): T => {
     const tree = transformTree<T>(input, rules);
     const result = transformApply<T>(tree, transform);
