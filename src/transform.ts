@@ -10,7 +10,7 @@
  * Represents a function that takes an array of matched strings or TreeNode objects
  * and returns a transformed value of type T.
  */
-export type TransformFunction<T = string> = (match: (string | TreeNode<T> | T)[], node: string) => T;
+export type TransformFunction<T = string> = (match: (string | TreeNode<T> | T)[], original?: string) => T;
 
 /**
  * TransformationRule interface
@@ -40,7 +40,7 @@ export type TransformationRule<T = string> = {
 
 export type TreeNode<T = string> = {
     type: string;
-    oryginal?: string;
+    original?: string;
     values: (string | TreeNode<T>)[];
     rule?: TransformationRule<T>;
     transformed?: T;
@@ -108,16 +108,16 @@ export const transformTree = <T = string>(
             if (matchIndex > 0) {
                 const node: TreeNode<T> = {
                     type: 'text',
-                    oryginal: text.substring(0, matchIndex),
+                    original: text.substring(0, matchIndex),
                     values: [],
                 };
-                parentNode.values.push(processText(node.oryginal!, node)); // Add the fragment before the pattern as a new node
+                parentNode.values.push(processText(node.original!, node)); // Add the fragment before the pattern as a new node
             }
 
             // Adding the found pattern
             const node: TreeNode<T> = {
                 type: 'pattern',
-                oryginal: fullMatch,
+                original: fullMatch,
                 values: [],
                 rule: largestPattern.rule,
             };
@@ -137,7 +137,7 @@ export const transformTree = <T = string>(
         return parentNode;
     };
 
-    const rootNode: TreeNode<T> = { type: 'root', oryginal: input, values: [] };
+    const rootNode: TreeNode<T> = { type: 'root', original: input, values: [] };
 
     return processText(input, rootNode);
 };
@@ -156,7 +156,7 @@ export const transformApply = <T = string>(
 ): T => {
     const transformNode = (node: TreeNode<T>): T => {
         if (node.values.length === 0) {
-            return node.oryginal as unknown as T;
+            return node.original as unknown as T;
         }
 
         const transformedValues = node.values.map(value => {
@@ -168,11 +168,11 @@ export const transformApply = <T = string>(
         });
 
         if (node.rule && node.rule.transform) {
-            node.transformed = node.rule.transform(transformedValues, node.oryginal!);
+            node.transformed = node.rule.transform(transformedValues, node.original);
         } else if (node.type === 'text') {
-            node.transformed = transform(node.values, node.oryginal!);
+            node.transformed = transform(node.values, node.original);
         } else if (node.type === 'root') {
-            node.transformed = transform(transformedValues, node.oryginal!);
+            node.transformed = transform(transformedValues, node.original);
         } else {
             throw new Error(`No transform function defined for rule: ${JSON.stringify(node.rule)}`);
         }

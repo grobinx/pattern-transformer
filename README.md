@@ -1,6 +1,6 @@
 # Pattern Transformer
 
-Pattern Transformer is a Node.js tool built with TypeScript that allows you to transform strings based on a predefined set of regular expression rules. It is designed to simplify and automate string transformations by applying custom patterns and rules.
+Pattern Transformer is a TypeScript package that allows you to transform strings based on a predefined set of regular expression rules. It is designed to simplify and automate string transformations by applying custom patterns and rules.
 
 ## Project Structure
 
@@ -18,6 +18,12 @@ pattern-transformer
 ```
 
 ## Installation
+
+To install the package via npm, use the following command:
+
+```bash
+npm install pattern-transformer
+```
 
 To get started with this project, clone the repository and install the dependencies:
 
