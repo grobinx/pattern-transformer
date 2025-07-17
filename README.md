@@ -8,8 +8,6 @@ Pattern Transformer is a Node.js tool built with TypeScript that allows you to t
 pattern-transformer
 ├── src
 │   ├── index.ts          # Entry point of the application
-│   └── utils
-│       └── helper.ts     # Utility functions
 ├── package.json          # npm configuration file
 ├── tsconfig.json         # TypeScript configuration file
 └── README.md             # Project documentation
@@ -35,6 +33,29 @@ npm start
 
 The main functionality of the tool is provided by a transformation function that takes a string and applies a series of transformations based on a set of regular expression rules. You can customize the transformation rules by modifying the rules in the source code.
 
+### Rules
+
+The transformation rules are defined as follows:
+
+```typescript
+const rules: TransformationRule[] = [
+    {
+        pattern: /^## (.*)$/m, // Matches lines starting with "##"
+        group: 1,
+        transform: (match) => `<h1>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h1>`,
+    },
+    {
+        pattern: /\*\*(.*?)\*\*/, // Matches bold text enclosed in "**"
+        group: 1,
+        transform: (match) => `<strong>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</strong>`,
+    },
+    {
+        pattern: /\+48\d{9}\b/, // Matches Polish phone numbers
+        transform: (match) => (match[0] as string).replace(/(\+48)(\d{3})(\d{3})(\d{3})/, '$1 $2 $3 $4'),
+    },
+];
+```
+
 ### Example
 
 Here’s an example of how the transformation function works:
@@ -43,15 +64,20 @@ Here’s an example of how the transformation function works:
 import { transform } from './src/index';
 
 const input = "## Description: **Phone number: +48999999999** +48999999999\nData: **some bold text**";
-const rules = [
-  { pattern: /^## (.*)$/m, group: 1 },
-  { pattern: /\*\*(.*?)\*\*/, group: 1 },
-  { pattern: /\+48\d{9}\b/ }
-];
-
 const result = transform(input, rules);
-console.log(JSON.stringify(result, null, 2));
+console.log(result);
 ```
+
+### Output Example
+
+Given the input above, the `transform` function will produce the following output:
+
+```html
+<h1>Description: <strong>Phone number: +48 999 999 999</strong> +48 999 999 999</h1>
+<strong>some bold text</strong>
+```
+
+This example demonstrates how the `transform` function processes the input string and applies the defined rules to extract and transform the relevant parts.
 
 ## Contributing
 

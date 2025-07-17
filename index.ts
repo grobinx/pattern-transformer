@@ -1,2 +1,1 @@
-export * from './src/index';
-//export * from './src/utils/helper';
+export * from './src/transform';
