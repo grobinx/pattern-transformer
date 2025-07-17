@@ -1,6 +1,6 @@
 # Pattern Transformer
 
-Pattern Transformer is a Node.js tool built with TypeScript that allows you to transform strings based on a predefined map of regular expressions. It is designed to simplify and automate string transformations by applying custom patterns and rules.
+Pattern Transformer is a Node.js tool built with TypeScript that allows you to transform strings based on a predefined set of regular expression rules. It is designed to simplify and automate string transformations by applying custom patterns and rules.
 
 ## Project Structure
 
@@ -33,23 +33,24 @@ To run the application, use the following command:
 npm start
 ```
 
-The main functionality of the tool is provided by a transformation function that takes a string and applies a series of transformations based on a map of regular expressions. You can customize the transformation rules by modifying the map in the source code.
+The main functionality of the tool is provided by a transformation function that takes a string and applies a series of transformations based on a set of regular expression rules. You can customize the transformation rules by modifying the rules in the source code.
 
 ### Example
 
 Here’s an example of how the transformation function works:
 
 ```typescript
-import { transform } from './src/utils/helper';
+import { transform } from './src/index';
 
-const input = "Hello, World!";
-const transformationMap = [
-  { pattern: /Hello/, replacement: "Hi" },
-  { pattern: /World/, replacement: "Universe" }
+const input = "## Description: **Phone number: +48999999999** +48999999999\nData: **some bold text**";
+const rules = [
+  { pattern: /^## (.*)$/m, group: 1 },
+  { pattern: /\*\*(.*?)\*\*/, group: 1 },
+  { pattern: /\+48\d{9}\b/ }
 ];
 
-const result = transform(input, transformationMap);
-console.log(result); // Output: "Hi, Universe!"
+const result = transform(input, rules);
+console.log(JSON.stringify(result, null, 2));
 ```
 
 ## Contributing

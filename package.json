@@ -6,7 +6,6 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/test.js",
-    "dev": "ts-node src/test.ts",
     "debug": "npm run build && node --inspect dist/test.js"
   },
   "dependencies": {},
