@@ -88,6 +88,17 @@ const result = transform(
 console.log(result);
 ```
 
+### Output
+
+Given the input above, the `transform` function will produce the following output:
+
+```html
+<h2>Opis: <strong>Nr telefonu: +48 999 999 999</strong> +48 999 999 999</h2>
+Dane: <strong>jakaś pogrubiona treść</strong> <em>GB29 NWBK 6016 1331 9268 19</em> PL12 3456 7890 1234 5678 9012 3456
+```
+
+This example demonstrates how the `transform` function processes the input string and applies the defined rules to extract and transform the relevant parts.
+
 ### Using transform with React
 
 ```ts
@@ -181,17 +192,6 @@ export const markdown = (text: string, ...rules: TransformationRule<ReactNode>[]
     return transform(text, markdownRules(...rules), (match) => <span>{transformReactMatch(match)}</span>);
 };
 ```
-
-### Output
-
-Given the input above, the `transform` function will produce the following output:
-
-```html
-<h2>Opis: <strong>Nr telefonu: +48 999 999 999</strong> +48 999 999 999</h2>
-Dane: <strong>jakaś pogrubiona treść</strong> <em>GB29 NWBK 6016 1331 9268 19</em> PL12 3456 7890 1234 5678 9012 3456
-```
-
-This example demonstrates how the `transform` function processes the input string and applies the defined rules to extract and transform the relevant parts.
 
 ## Additional Rules
 
