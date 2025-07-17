@@ -10,7 +10,7 @@
  * Represents a function that takes an array of matched strings or TreeNode objects
  * and returns a transformed value of type T.
  */
-export type TransformFunction<T = string> = (match: (string | TreeNode<T> | T)[]) => T;
+export type TransformFunction<T = string> = (match: (string | TreeNode<T> | T)[], node: string) => T;
 
 /**
  * TransformationRule interface
@@ -168,11 +168,11 @@ export const transformApply = <T = string>(
         });
 
         if (node.rule && node.rule.transform) {
-            node.transformed = node.rule.transform(transformedValues);
+            node.transformed = node.rule.transform(transformedValues, node.oryginal!);
         } else if (node.type === 'text') {
-            node.transformed = transform(node.values);
+            node.transformed = transform(node.values, node.oryginal!);
         } else if (node.type === 'root') {
-            node.transformed = transform(transformedValues);
+            node.transformed = transform(transformedValues, node.oryginal!);
         } else {
             throw new Error(`No transform function defined for rule: ${JSON.stringify(node.rule)}`);
         }
