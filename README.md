@@ -101,6 +101,8 @@ This example demonstrates how the `transform` function processes the input strin
 
 ### Using transform with React
 
+The following example demonstrates the usage of the `transform` function with React and Material-UI. It showcases how to apply transformation rules to convert Markdown-like syntax into React components, such as `Typography`, `strong`, `em`, and others, for rendering styled content.
+
 ```ts
 import { Typography } from "@mui/material";
 import { isTreeNode, transform, TransformationRule, TransformFunction } from "pattern-transformer";
