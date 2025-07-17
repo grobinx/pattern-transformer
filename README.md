@@ -88,6 +88,100 @@ const result = transform(
 console.log(result);
 ```
 
+### Using transform with React
+
+```ts
+import { Typography } from "@mui/material";
+import { isTreeNode, transform, TransformationRule, TransformFunction } from "pattern-transformer";
+import { isValidElement, ReactNode } from "react";
+
+const transformReactMatch: TransformFunction<ReactNode> = (match) => {
+    return match.map(item => {
+        if (item == null) return "";
+        return isTreeNode(item) ? item.transformed : isValidElement(item) ? item : item.toString();
+    });
+}
+
+function markdownRules(...additionalRules: TransformationRule<ReactNode>[]): TransformationRule<ReactNode>[] {
+    const baseRules: TransformationRule<ReactNode>[] = [
+        {
+            pattern: /^# (.*)$/m, // Matches lines starting with "# " (Markdown header level 1)
+            group: 1,
+            transform: (match) => <Typography variant="h1">{transformReactMatch(match)}</Typography>,
+        },
+        {
+            pattern: /^## (.*)$/m, // Matches lines starting with "## " (Markdown header level 2)
+            group: 1,
+            transform: (match) => <Typography variant="h2">{transformReactMatch(match)}</Typography>,
+        },
+        {
+            pattern: /^### (.*)$/m, // Matches lines starting with "### " (Markdown header level 3)
+            group: 1,
+            transform: (match) => <Typography variant="h3">{transformReactMatch(match)}</Typography>,
+        },
+        {
+            pattern: /^#### (.*)$/m, // Matches lines starting with "#### " (Markdown header level 4)
+            group: 1,
+            transform: (match) => <Typography variant="h4">{transformReactMatch(match)}</Typography>,
+        },
+        {
+            pattern: /\*\*(.*?)\*\*/, // Matches bold text enclosed in "**"
+            group: 1,
+            transform: (match) => <strong>{transformReactMatch(match)}</strong>,
+        },
+        {
+            pattern: /\*(.*?)\*/, // Matches italic text enclosed in "*"
+            group: 1,
+            transform: (match) => <em>{transformReactMatch(match)}</em>,
+        },
+        {
+            pattern: /\[(.*?)\]\((.*?)\)/, // Matches Markdown links [text](url)
+            transform: (match) => {
+                if (!match || match.length < 1 || typeof match[0] !== 'string') {
+                    return null;
+                }
+                const found = match[0].match(/\[(.*?)\]\((.*?)\)/);
+                if (!found || found.length < 3) {
+                    return match[0];
+                }
+                return <a href={found[2]}>{found[1]}</a>;
+            },
+            stop: true,
+        },
+        {
+            pattern: /!\[(.*?)\]\((.*?)\)/, // Matches Markdown images ![alt](url)
+            transform: (match) => {
+                if (!match || match.length < 1 || typeof match[0] !== 'string') {
+                    return null;
+                }
+                const found = match[0].match(/!\[(.*?)\]\((.*?)\)/);
+                if (!found || found.length < 3) {
+                    return match[0];
+                }
+                return <img src={found[2]} alt={found[1]} />;
+            },
+            stop: true,
+        },
+        {
+            pattern: /`([^`]+)`/, // Matches inline code `code`
+            transform: (match) => <code>${match[0] as string}</code>,
+            stop: true,
+        },
+        {
+            pattern: /```([\s\S]*?)```/, // Matches code blocks ```code```
+            transform: (match) => <pre><code>${match[0] as string}</code></pre>,
+            stop: true,
+        },
+    ];
+
+    return [...baseRules, ...additionalRules];
+};
+
+export const markdown = (text: string, ...rules: TransformationRule<ReactNode>[]): ReactNode => {
+    return transform(text, markdownRules(...rules), (match) => <span>{transformReactMatch(match)}</span>);
+};
+```
+
 ### Output
 
 Given the input above, the `transform` function will produce the following output:
