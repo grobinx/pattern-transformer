@@ -7,12 +7,14 @@ Pattern Transformer is a Node.js tool built with TypeScript that allows you to t
 ```
 pattern-transformer
 ├── src
-│   ├── index.ts          # Entry point of the application
-│   ├── rules             # Contains transformation rules
-│   └── transform.ts      # Core transformation logic
-├── package.json          # npm configuration file
-├── tsconfig.json         # TypeScript configuration file
-└── README.md             # Project documentation
+│   ├── rules                       # Contains transformation rules
+|   |   ├── simpleMarkdown.ts       # Simple Markdown transformation
+│   |   └── textTransformations.ts  # Single text transformation rules
+│   └── transform.ts                # Core transformation logic
+│── index.ts                        # Entry point of the application
+├── package.json                    # npm configuration file
+├── tsconfig.json                   # TypeScript configuration file
+└── README.md                       # Project documentation
 ```
 
 ## Installation
