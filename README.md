@@ -66,8 +66,6 @@ const result = transform(input, rules, (match) => match.map((item) => typeof ite
 console.log(result);
 ```
 
-### Output Example
-
 Given the input above, the `transform` function will produce the following output:
 
 ```html
