@@ -8,6 +8,8 @@ Pattern Transformer is a Node.js tool built with TypeScript that allows you to t
 pattern-transformer
 ├── src
 │   ├── index.ts          # Entry point of the application
+│   ├── rules             # Contains transformation rules
+│   └── transform.ts      # Core transformation logic
 ├── package.json          # npm configuration file
 ├── tsconfig.json         # TypeScript configuration file
 └── README.md             # Project documentation
@@ -33,47 +35,71 @@ npm start
 
 The main functionality of the tool is provided by a transformation function that takes a string and applies a series of transformations based on a set of regular expression rules. You can customize the transformation rules by modifying the rules in the source code.
 
-### Example
+## Example
+
+### Rules
 
 The transformation rules are defined as follows:
 
 ```typescript
-const rules: TransformationRule[] = [
-    {
-        pattern: /^## (.*)$/m, // Matches lines starting with "##"
-        group: 1,
-        transform: (match) => `<h1>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h1>`,
-    },
-    {
-        pattern: /\*\*(.*?)\*\*/, // Matches bold text enclosed in "**"
-        group: 1,
-        transform: (match) => `<strong>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</strong>`,
-    },
-    {
-        pattern: /\+48\d{9}\b/, // Matches Polish phone numbers
-        transform: (match) => (match[0] as string).replace(/(\+48)(\d{3})(\d{3})(\d{3})/, '$1 $2 $3 $4'),
-    },
-];
+export const simpleMarkdown = (...additionalRules: TransformationRule[]): TransformationRule[] => {
+    const baseRules: TransformationRule[] = [
+        {
+            pattern: /^# (.*)$/m, // Matches lines starting with "# " (Markdown header level 1)
+            group: 1,
+            transform: (match) => `<h1>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h1>`,
+        },
+        {
+            pattern: /^## (.*)$/m, // Matches lines starting with "## " (Markdown header level 2)
+            group: 1,
+            transform: (match) => `<h2>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h2>`,
+        },
+        ...
+    ]
+    ...
+}
 ```
+
+### Execute
 
 Here’s an example of how the transformation function works:
 
 ```typescript
 import { transform } from './src/index';
+import { simpleMarkdown } from './src/rules/simpleMarkdown';
+import { phoneNumberTransform, ibanTransform } from './src/rules/textTransforms';
 
-const input = "## Description: **Phone number: +48999999999** +48999999999\nData: **some bold text**";
-const result = transform(input, rules, (match) => match.map((item) => typeof item === 'string' ? item : item.transformed).join(''));
+const input = "## Opis: **Nr telefonu: +48999999999** +48999999999\nDane: **jakaś pogrubiona treść** *GB29NWBK60161331926819* PL12345678901234567890123456";
+
+const result = transform(
+    input, 
+    simpleMarkdown(phoneNumberTransform, ibanTransform),
+    (match) => match.map((item) => typeof item === 'string' ? item : item.transformed).join('')
+);
+
 console.log(result);
 ```
+
+### Output
 
 Given the input above, the `transform` function will produce the following output:
 
 ```html
-<h1>Description: <strong>Phone number: +48 999 999 999</strong> +48 999 999 999</h1>
-<strong>some bold text</strong>
+<h2>Opis: <strong>Nr telefonu: +48 999 999 999</strong> +48 999 999 999</h2>
+Dane: <strong>jakaś pogrubiona treść</strong> <em>GB29 NWBK 6016 1331 9268 19</em> PL12 3456 7890 1234 5678 9012 3456
 ```
 
 This example demonstrates how the `transform` function processes the input string and applies the defined rules to extract and transform the relevant parts.
+
+## Additional Rules
+
+The project includes additional rules for transforming various types of data:
+
+- **Phone Numbers**: Formats international phone numbers into a readable format.
+- **IBAN Numbers**: Adds spaces every 4 characters for better readability.
+- **Email Addresses**: Converts emails to lowercase or clickable links.
+- **URLs**: Converts URLs into clickable links.
+- **GPS Coordinates**: Formats latitude and longitude with directional indicators.
 
 ## Contributing
 

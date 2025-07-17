@@ -25,6 +25,10 @@ export type TransformationRule<T = string> = {
      * @returns Transformed value of type T.
      */
     transform: (match: (string | TreeNode<T> | T)[]) => T;
+    /**
+     * Stop transform level
+     */
+    stop?: boolean;
 };
 
 type TreeNode<T = string> = {
@@ -97,13 +101,13 @@ export const transformTree = <T = string>(
             // Adding the found pattern
             const node: TreeNode<T> = {
                 type: 'pattern',
-                oryginal: match,
+                oryginal: fullMatch,
                 values: [],
                 rule: largestPattern.rule,
             };
 
             // Check if the pattern can be further divided
-            if (match !== fullMatch) {
+            if (match !== fullMatch && !largestPattern.rule.stop) {
                 parentNode.values.push(processText(match, node));
             } else {
                 node.values.push(match); // Add the pattern as a value if it cannot be further divided
