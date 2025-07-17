@@ -4,12 +4,12 @@ const input = "## Opis: **Nr telefonu: +48999999999** +48999999999\nDane: **jaki
 const rules: TransformationRule[] = [
     {
         pattern: /^## (.*)$/m, // Dodano zakończenie wiersza
-        matchGroup: 1,
+        group: 1,
         //transform: (match) => `<h1>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</h1>`,
     },
     {
         pattern: /\*\*(.*?)\*\*/, // Dodano zakończenie ciągu znaków
-        matchGroup: 1,
+        group: 1,
         //transform: (match) => `<strong>${match.map((item) => typeof item === 'string' ? item : item.transformed).join('')}</strong>`,
     },
     {
