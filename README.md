@@ -33,7 +33,7 @@ npm start
 
 The main functionality of the tool is provided by a transformation function that takes a string and applies a series of transformations based on a set of regular expression rules. You can customize the transformation rules by modifying the rules in the source code.
 
-### Rules
+### Example
 
 The transformation rules are defined as follows:
 
@@ -56,15 +56,13 @@ const rules: TransformationRule[] = [
 ];
 ```
 
-### Example
-
 Here’s an example of how the transformation function works:
 
 ```typescript
 import { transform } from './src/index';
 
 const input = "## Description: **Phone number: +48999999999** +48999999999\nData: **some bold text**";
-const result = transform(input, rules);
+const result = transform(input, rules, (match) => match.map((item) => typeof item === 'string' ? item : item.transformed).join(''));
 console.log(result);
 ```
 
