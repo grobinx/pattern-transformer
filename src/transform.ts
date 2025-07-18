@@ -74,9 +74,17 @@ export const transformTree = <T = string>(
         let largestMatch: { fullMatch: string, match: string, rule: TransformationRule<T> } | null = null;
 
         for (const rule of rules) {
+            // Skip rules that are unlikely to match (optional optimization)
+            if (!rule.pattern.test(text)) {
+                continue;
+            }
+
             const match = text.match(rule.pattern);
-            if (match && match[rule.group || 0] && (!largestMatch || match[rule.group || 0].length > largestMatch.match.length)) {
-                largestMatch = { fullMatch: match[0], match: match[rule.group || 0], rule };
+            if (match && match[rule.group || 0]) {
+                const currentMatch = match[rule.group || 0];
+                if (!largestMatch || currentMatch.length > largestMatch.match.length) {
+                    largestMatch = { fullMatch: match[0], match: currentMatch, rule };
+                }
             }
         }
 
